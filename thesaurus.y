@@ -14,8 +14,9 @@ void yyerror(char* s);
 
 %token NT BT SN
 %token SEPARATOR
+%token NEWLINE
 
-%token <string> PHRASE
+%token <string> WORD
 %token <string> LANG
 
 
@@ -41,22 +42,26 @@ Concepts 	: Concepts Concept				{$$ = strdup(" ");}
 			| Concept						{$$ = strdup(" ");}
 			;
 
-Concept		: PHRASE Properties				{$$ = strdup(" ");}
-			| PHRASE						{$$ = strdup(" ");}
+Concept		: NEWLINE WORD Properties		{$$ = strdup(" ");}
+			| WORD							{$$ = strdup(" ");}
 			;
 
 Properties 	: Properties Property			{$$ = strdup(" ");}
 			| Property						{$$ = strdup(" ");}
 			;
 
-Property	: LANG PHRASE					{$$ = strdup(" ");}
+Property	: LANG WORD						{$$ = strdup(" ");}
 			| NT ConceptList				{$$ = strdup(" ");}
 			| BT ConceptList				{$$ = strdup(" ");}
-			| SN PHRASE						{$$ = strdup(" ");}
+			| SN Phrase						{$$ = strdup(" ");}
 			;
 
-ConceptList : ConceptList SEPARATOR PHRASE	{$$ = strdup(" ");}
-			| PHRASE						{$$ = strdup(" ");}
+Phrase		: Phrase WORD
+			| WORD
+			;
+
+ConceptList : ConceptList SEPARATOR WORD	{$$ = strdup(" ");}
+			| WORD							{$$ = strdup(" ");}
 			;
 %%
 

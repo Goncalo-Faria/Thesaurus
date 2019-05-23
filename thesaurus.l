@@ -10,24 +10,31 @@ char* strtolower( char * str ){
 }
 
 %}
+%x NONDEFINED
 %option noyywrap
 %%
-\%language                  { return LANGDEC;/*declaring suported languages*/}
-\%baselang                  { return BASELANGDEC;/*declaring base language*/}
-\#[^\n]*\n                  { ; /*comment*/ }
-NT                          { return NT;/*narrow term*/}
-BT                          { return BT;/*broader term*/}
-SN                          { return SN;/*scope name*/}
-,                           { return SEPARATOR; }
-[A-Z][A-Z]				    {
+\%language                  { printf("%s ",yytext); return LANGDEC;/*declaring suported languages*/}
+\%baselang                  { printf("%s ",yytext); return BASELANGDEC;/*declaring base language*/}
+\#[^\n#]*\n                 { printf("%s ",yytext); /*comment*/}
+NT                          { printf("%s ",yytext); return NT;/*narrow term*/}
+BT                          { printf("%s ",yytext); return BT;/*broader term*/}
+SN                          { printf("%s ",yytext); return SN;/*scope name*/}
+,                           { printf("%s ",yytext); return SEPARATOR;}
+[A-Z][A-Z]				    {   
+                                printf("%s ",yytext);
                                 yylval.string = strdup(yytext); 
                                 return LANG;
                                 /*language identifier*/
                             }
-[^,\n]+/[\n,]               {
+[a-zA-Z]+                   {   
+                                printf("%s\n",yytext);
                                 yylval.string = strtolower(strdup(yytext)); 
-                                return PHRASE;
+                                return WORD;
                                 /*phrase*/
                             }
-.|\n 						{ ; /* garbage*/}
+\%                          { BEGIN NONDEFINED; }
+<NONDEFINED>.               { ; }
+<NONDEFINED>\n              { BEGIN INITIAL; printf("&\n"); }
+\n                          { return NEWLINE; }
+. 						    { ; /* garbage*/}
 %%
