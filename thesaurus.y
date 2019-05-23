@@ -47,7 +47,7 @@ Remaining 	: Remaining NEWLINE
 			| NEWLINE
 			;
 
-Concept		: NEWLINE WORD Properties		{$$ = strdup(" ");}
+Concept		: NEWLINE WORD Properties		{printf("cc\n");$$ = strdup(" ");}
 			| NEWLINE WORD					{$$ = strdup(" ");}
 			;
 
