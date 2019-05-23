@@ -1,0 +1,6 @@
+
+Será resolvido o exercício 3.
+
+exe = 86264 % 6 + 1
+
+pl18TP3NAl1-NAl2-NAl3.zip
