@@ -3,34 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-char address;
-int TABID[26];
-int yylex();
-int varcount = 0;
-int jumpvar = 0;
-#define UNDECLARED -1
-
 void yyerror(char* s);
-
-int lookup (char var){
-	return TABID[var-'a'];
-}
-
-void declare (char var){
-	if (TABID[var-'a'] != UNDECLARED) {
-		yyerror("Variable alReady declared."); 
-	}else {
-		TABID[var -'a'] = varcount++;
-	}
-}
-
-int getNewJump(){
-	return ++jumpvar;
-}
-
-int getJump(){
-	return jumpvar;
-}
 
 %}
 %union {char* string;}
@@ -46,43 +19,44 @@ int getJump(){
 %token <string> LANG
 
 
-%type <string> Thesaurus Concepts Specs Spec Langs Concept ConceptList Properity Properties
+%type <string> Thesaurus Concepts Specs Spec Langs Concept ConceptList Property Properties
 %%
 
-Thesaurus 	: Specs Concepts  				{return "";}
+Thesaurus 	: Specs Concepts  				{$$ = strdup(" ");}
 			;
 
-Specs		: Specs Spec					{return "";}
-			| Spec							{return "";}
+Specs		: Specs Spec					{$$ = strdup(" ");}
+			| Spec							{$$ = strdup(" ");}
 			;
 
-Spec 		: LANGDEC Langs					{return "";}
-			| BASELANGDEC LANG				{return "";}
+Spec 		: LANGDEC Langs					{$$ = strdup(" ");}
+			| BASELANGDEC LANG				{$$ = strdup(" ");}
 			;
 	
-Langs		: Langs LANG					{return "";}
-			| LANG							{return "";}
+Langs		: Langs LANG					{$$ = strdup(" ");}
+			| LANG							{$$ = strdup(" ");}
 			;
 
-Concepts 	: Concepts Concept				{return "";}
-			| Concept						{return "";}
+Concepts 	: Concepts Concept				{$$ = strdup(" ");}
+			| Concept						{$$ = strdup(" ");}
 			;
 
-Concept		: PHRASE Properties				{return "";}
+Concept		: PHRASE Properties				{$$ = strdup(" ");}
+			| PHRASE						{$$ = strdup(" ");}
 			;
 
-Properties 	: Properties Properity			{return "";}
-			|
+Properties 	: Properties Property			{$$ = strdup(" ");}
+			| Property						{$$ = strdup(" ");}
 			;
 
-Property	: LANG PHRASE					{return "";}
-			| NT ConceptList				{return "";}
-			| BT ConceptList				{return "";}
-			| SN PHRASE						{return "";}
+Property	: LANG PHRASE					{$$ = strdup(" ");}
+			| NT ConceptList				{$$ = strdup(" ");}
+			| BT ConceptList				{$$ = strdup(" ");}
+			| SN PHRASE						{$$ = strdup(" ");}
 			;
 
-ConceptList : ConceptList SEPARATOR PHRASE	{return "";}
-			| PHRASE						{return "";}
+ConceptList : ConceptList SEPARATOR PHRASE	{$$ = strdup(" ");}
+			| PHRASE						{$$ = strdup(" ");}
 			;
 %%
 

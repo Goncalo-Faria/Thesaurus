@@ -19,7 +19,7 @@ NT                          { return NT;/*narrow term*/}
 BT                          { return BT;/*broader term*/}
 SN                          { return SN;/*scope name*/}
 ,                           { return SEPARATOR; }
-[A-Z]+					    {
+[A-Z][A-Z]				    {
                                 yylval.string = strdup(yytext); 
                                 return LANG;
                                 /*language identifier*/
