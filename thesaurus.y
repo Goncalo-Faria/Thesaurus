@@ -43,14 +43,14 @@ Concepts 	: Concepts Concept				{$$ = strdup(" ");}
 			;
 
 Concept		: NEWLINE WORD Properties		{$$ = strdup(" ");}
-			| WORD							{$$ = strdup(" ");}
+			| NEWLINE WORD					{$$ = strdup(" ");}
 			;
 
 Properties 	: Properties Property			{$$ = strdup(" ");}
 			| Property						{$$ = strdup(" ");}
 			;
 
-Property	: LANG WORD						{$$ = strdup(" ");}
+Property	: LANG Phrase					{$$ = strdup(" ");}
 			| NT ConceptList				{$$ = strdup(" ");}
 			| BT ConceptList				{$$ = strdup(" ");}
 			| SN Phrase						{$$ = strdup(" ");}
@@ -60,8 +60,8 @@ Phrase		: Phrase WORD
 			| WORD
 			;
 
-ConceptList : ConceptList SEPARATOR WORD	{$$ = strdup(" ");}
-			| WORD							{$$ = strdup(" ");}
+ConceptList : ConceptList SEPARATOR Phrase	{$$ = strdup(" ");}
+			| Phrase					    {$$ = strdup(" ");}
 			;
 %%
 
