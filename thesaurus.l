@@ -15,7 +15,8 @@ char* strtolower( char * str ){
 %%
 \%language                  { printf("%s ",yytext); return LANGDEC;/*declaring suported languages*/}
 \%baselang                  { printf("%s ",yytext); return BASELANGDEC;/*declaring base language*/}
-\#[^\n]*/\n                 { printf("commen:%s\n",yytext); /*comment*/}
+\#[^\n]*/\n               { printf("comment:%s\n",yytext); /*comment*/}
+\#[^\n]*                   { printf("comment:%s\n",yytext); /*comment*/}
 NT                          { printf("nt:%s ",yytext); return NT;/*narrow term*/}
 BT                          { printf("bt:%s ",yytext); return BT;/*broader term*/}
 SN                          { printf("sn:%s ",yytext); return SN;/*scope name*/}
@@ -32,9 +33,15 @@ SN                          { printf("sn:%s ",yytext); return SN;/*scope name*/}
                                 return WORD;
                                 /*phrase*/
                             }
+[a-zA-Z()+/"-"&$!?]+         {   
+                                printf("t:%s\n",yytext);
+                                yylval.string = strdup(yytext); 
+                                return TERM;
+                                /*phrase*/
+                            }
 \%                          { BEGIN NONDEFINED; }
 <NONDEFINED>.               { ; }
 <NONDEFINED>\n              { BEGIN INITIAL; printf("&\n"); }
 \n\n                        { return NEWLINE; }
-.|\n 						{ ; /* garbage*/}
+" "|\n 						{ ; /* garbage*/}
 %%
