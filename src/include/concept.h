@@ -2,15 +2,15 @@
 #define CONCEPT__H
 
 #import <glib.h>
+#import "relation.h"
 
 typedef struct concept *Concept;
 typedef GHashTable * ConceptSet;
 
-void link(Concept source, Relation r, Concept associatee);
+void linkConcepts(Concept source, Relation r, Concept associatee);
 
 Concept mkConcept( const char * name );
 void unmkConcept( Concept cpt );
-Concept clone( Concept cpt );
 ConceptSet newConceptSetfromHashTable();
 
 #endif

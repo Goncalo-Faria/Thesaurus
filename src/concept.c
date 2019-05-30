@@ -1,5 +1,5 @@
-#include "concept.h"
-#include "relation.h"
+#include "include/concept.h"
+#include "include/relation.h"
 #include <glib.h>
 
 typedef struct concept{
@@ -21,11 +21,19 @@ Concept mkConcept( const char * name ){
     return cpt;
 }
 
+unsigned int hashConcept( Concept key ){
+    return g_str_hash(key->name);
+}
+
+int equalConcept( Concept a, Concept b){
+    return g_str_equal(a->name, b->name);
+}
+
 ConceptSet newConceptSetfromHashTable(){
     return g_hash_table_new_full(
         hashConcept,
         equalConcept,
-        unmkConcept,
+        NULL,
         NULL 
     );
 }
@@ -35,26 +43,13 @@ void unmkConcept( Concept cpt ){
     g_hash_table_destroy(cpt->related);
 }
 
-Concept clone( Concept cpt ){
-    return mkConcept(cpt->name);
-}
-
-unsigned int hashConcept( Concept key ){
-    return g_str_hash(key->name);
-}
-
-int equalConcept( Concept a, Concept b){
-    return g_str_equal(a->name, b->name);
-}
-
 /*
     adciona o conceito ao conjunto de conceitos de source associados por r.
 */
-void link(Concept source, Relation r, Concept associatee){
-    if( !g_hash_table_contains(saurus->related, r) ){
-        g_hash_table_insert(saurus->related, clone(r), newConceptSetfromHashTable() );
+void linkConcepts(Concept source, Relation r, Concept associatee){
+    if( !g_hash_table_contains(source->related, r) ){
+        g_hash_table_insert(source->related, clone(r), newConceptSetfromHashTable() );
     }
-    ConceptSet cs = g_hash_table_lookup(saurus->related, r);
-    Concept cpy = clone(associate);
-    g_hash_table_insert(cs, cpy, cpy);
+    ConceptSet cs = g_hash_table_lookup(source->related, r);
+    g_hash_table_insert(cs, associatee, associatee);
 }

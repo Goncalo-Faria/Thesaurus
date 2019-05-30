@@ -8,7 +8,7 @@ typedef struct relation *Relation;
 typedef GHashTable * RelationSet;
 
 Relation mkRelation( const char * name );
-void unmkRelaiton( Relation r);
+void unmkRelation( Relation r);
 Relation clone( Relation rel );
 
 RelationSet newRelationSetfromHashTable();

@@ -13,33 +13,23 @@ char* strtolower( char * str ){
 %x NONDEFINED
 %option noyywrap
 %%
-\%language                  { printf("%s ",yytext); return LANGDEC;/*declaring suported languages*/}
-\%baselang                  { printf("%s ",yytext); return BASELANGDEC;/*declaring base language*/}
-\#[^\n]*                    { printf("comment:%s\n",yytext); /*comment*/}
-NT                          { printf("nt:%s ",yytext); return NT;/*narrow term*/}
-BT                          { printf("bt:%s ",yytext); return BT;/*broader term*/}
-SN                          { printf("sn:%s ",yytext); return SN;/*scope name*/}
-,                           { printf("%s ",yytext); return SEPARATOR;}
-[A-Z][A-Z]				    {   
-                                printf("lang:%s ",yytext);
+\%language                  { return LANGDEC;/*declaring suported languages*/}
+\%baselang                  { return BASELANGDEC;/*declaring base language*/}
+\%inv                       { return RELATE; }
+\#[^\n]*                    { ; /*comment*/}
+,                           { return SEPARATOR;}
+[A-Z][A-Z]+				    {   
                                 yylval.string = strdup(yytext); 
                                 return LANG;
                                 /*language identifier*/
                             }
-[a-zA-Z]+                   {   
-                                printf("w:%s\n",yytext);
-                                yylval.string = strtolower(strdup(yytext)); 
+[a-zA-Z()+/\-&$!?]+         {   
+                                yylval.string = strdup(yytext); 
                                 return WORD;
                                 /*phrase*/
                             }
-[a-zA-Z()+/\-&$!?]+         {   
-                                printf("t:%s\n",yytext);
-                                yylval.string = strdup(yytext); 
-                                return TERM;
-                                /*phrase*/
-                            }
 \%                          { BEGIN NONDEFINED; }
-<NONDEFINED>[^\n]+/\n       { BEGIN INITIAL; printf("&\n"); }
+<NONDEFINED>[^\n]+/\n       { BEGIN INITIAL; }
 \n\n+                       { return NEWLINE; }
 " "|\n 						{ ; /* garbage*/  }
 %%
