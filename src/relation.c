@@ -18,6 +18,10 @@ void unmkRelation( Relation r){
     free(r->name);
 }
 
+void showRelation( Relation r ){
+    printf("\t %s \n ", r->name);
+}
+
 Relation clone( Relation rel ){
 
     return mkRelation(rel->name);

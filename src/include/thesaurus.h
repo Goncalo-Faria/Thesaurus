@@ -7,6 +7,7 @@
 typedef struct thesaurus *Thesaurus;
 
 Thesaurus mkThesaurus();
+void showThesaurus(Thesaurus saurus);
 
 Relation getRelation( Thesaurus saurus, const char* relationname );
 Concept getConcept( Thesaurus saurus, const char* conceptname );

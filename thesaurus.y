@@ -47,7 +47,7 @@ void unmkProp( Prop p ){
 %type <prop> Property
 %%
 
-Thesaurus 	: Start Specs Concepts Remaining { ; }
+Thesaurus 	: Start Specs Concepts Remaining { showThesaurus(saurus); }
 			;
 
 Start 		:								 { saurus = mkThesaurus(); }
@@ -117,7 +117,7 @@ ConceptList : ConceptList SEPARATOR Terms	{
 			;
 
 Terms		: Terms WORD					{
-				asprintf(&$$,"%s%s",$1,$2);
+				asprintf(&$$,"%s %s",$1,$2);
 			}
 			| WORD							{
 				$$ = strdup($1);

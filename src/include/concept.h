@@ -13,4 +13,6 @@ Concept mkConcept( const char * name );
 void unmkConcept( Concept cpt );
 ConceptSet newConceptSetfromHashTable();
 
+void showConcept( Concept cpt );
+
 #endif

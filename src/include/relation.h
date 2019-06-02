@@ -16,4 +16,6 @@ RelationSet newRelationSetfromHashTable();
 unsigned int hashRelation( Relation key );
 int equalRelation( Relation a, Relation b);
 
+void showRelation( Relation cpt );
+
 #endif
