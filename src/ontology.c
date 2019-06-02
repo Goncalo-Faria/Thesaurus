@@ -1,25 +1,25 @@
-#include "include/thesaurus.h"
+#include "include/ontology.h"
 #include "include/relation.h"
 #include <glib.h>
 
-typedef struct thesaurus{
+typedef struct ontology{
     char * baselanguage;
-    GHashTable * suportedLanguages;
-    GHashTable * concepts; /* Map<char* Concept>*/
+    GHashTable * suportedLanguages; /* Set<char *> */
+    GHashTable * concepts; /* Map<char*, Concept>*/
     GHashTable * relations; /* Map< Relation, Set<Relation> >*/
-} *Thesaurus;
+} *Ontology;
 
-void setBaseLanguage(Thesaurus saurus, const char * lang){
+void setBaseLanguage(Ontology saurus, const char * lang){
     saurus->baselanguage = strdup(lang);
 }
 
-void addLanguage(Thesaurus saurus, const char* lang){
+void addLanguage(Ontology saurus, const char* lang){
     char * cpy = strdup(lang);
     g_hash_table_insert(saurus->suportedLanguages, cpy, cpy);
 }
 
-Thesaurus mkThesaurus(){
-    Thesaurus ths = (Thesaurus)malloc(sizeof(struct thesaurus));
+Ontology mkOntology(){
+    Ontology ths = (Ontology)malloc(sizeof(struct ontology));
     ths->concepts = g_hash_table_new_full(
         g_str_hash, 
         g_str_equal, 
@@ -42,7 +42,7 @@ Thesaurus mkThesaurus(){
     return ths;
 }
 
-void unmkThesaurus( Thesaurus saurus ){
+void unmkOntology( Ontology saurus ){
     g_hash_table_destroy(saurus->concepts);
     g_hash_table_destroy(saurus->relations);
     g_hash_table_destroy(saurus->suportedLanguages);
@@ -50,13 +50,13 @@ void unmkThesaurus( Thesaurus saurus ){
     free(saurus);
 }
 /*
-void addLanguage( Thesaurus saurus, char * lang ){
+void addLanguage( Ontology saurus, char * lang ){
     GString slan = g_string_new( lang );
     g_hash_table_insert(saurus->languages, slan, NULL);
 }
 */
 
-void showThesaurus(Thesaurus saurus){
+void showOntology(Ontology saurus){
 
     int number_of_concepts = g_hash_table_size(saurus->concepts);
     int number_of_relations = g_hash_table_size(saurus->relations);
@@ -102,7 +102,7 @@ void showThesaurus(Thesaurus saurus){
 /*
 adciona uma nova entrada ao conjunto de meta relações.
 */
-Relation getRelation( Thesaurus saurus, const char* relationname ){
+Relation getRelation( Ontology saurus, const char* relationname ){
     
     Relation result = mkRelation(relationname);
 
@@ -117,7 +117,7 @@ Relation getRelation( Thesaurus saurus, const char* relationname ){
     return result;
 }
 
-Concept getConcept( Thesaurus saurus, const char* conceptname ){
+Concept getConcept( Ontology saurus, const char* conceptname ){
 
     if( ! g_hash_table_contains(saurus->concepts, conceptname) ){
         g_hash_table_insert(
@@ -130,7 +130,7 @@ Concept getConcept( Thesaurus saurus, const char* conceptname ){
     return (Concept)g_hash_table_lookup(saurus->concepts,conceptname);
 }
 
-void relateRaw(Thesaurus saurus, const char* subclasse, const char* superclasse ){
+void relateRaw(Ontology saurus, const char* subclasse, const char* superclasse ){
     Relation a = getRelation( saurus, subclasse);
     Relation b = getRelation( saurus, superclasse);
 
@@ -141,7 +141,7 @@ void relateRaw(Thesaurus saurus, const char* subclasse, const char* superclasse 
 associa um novo par de relações.
 */
 
-void relate( Thesaurus saurus, Relation subclasse/*NT - tem de ser avisado */, Relation superclasse/*BT*/){
+void relate( Ontology saurus, Relation subclasse/*NT - tem de ser avisado */, Relation superclasse/*BT*/){
 
     if( !g_hash_table_contains(saurus->relations,superclasse) ){
         g_hash_table_insert(saurus->relations, clone(superclasse), g_hash_table_new( hashRelation, equalRelation) );
@@ -157,7 +157,7 @@ void relate( Thesaurus saurus, Relation subclasse/*NT - tem de ser avisado */, R
     g_hash_table_insert(rl, cpy, cpy);
 }
 
-void associate(Thesaurus saurus, Concept source, const char * relation, const char * assoc){
+void associate(Ontology saurus, Concept source, const char * relation, const char * assoc){
     
     if( g_hash_table_contains(saurus->suportedLanguages, relation) ){
 

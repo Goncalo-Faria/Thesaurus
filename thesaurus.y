@@ -2,7 +2,7 @@
 #define _GNU_SOURCE //asprintf
 #include <stdio.h>
 #include <string.h>
-#include "src/include/thesaurus.h"
+#include "src/include/ontology.h"
 #include "src/include/concept.h"
 
 
@@ -13,7 +13,7 @@ typedef struct property{
 
 void yyerror(char* s);
 
-Thesaurus saurus;
+Ontology saurus;
 
 Prop mkProp(const char* relationname, GList* list){
 	Prop p = (Prop)malloc(sizeof(struct property));
@@ -48,10 +48,10 @@ void unmkProp( Prop p ){
 %type <prop> Property
 %%
 
-Thesaurus 	: Start Specs Concepts Remaining { showThesaurus(saurus); unmkThesaurus(saurus); }
+Thesaurus 	: Start Specs Concepts Remaining { showOntology(saurus); unmkOntology(saurus); }
 			;
 
-Start 		:								 { saurus = mkThesaurus(); }
+Start 		:								 { saurus = mkOntology(); }
 			;
 
 Specs		: Specs Spec					 { ; }
