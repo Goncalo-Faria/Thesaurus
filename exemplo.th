@@ -1,6 +1,7 @@
 %language PT EN FR # linguas: PT EN
 %baselang EN # lingua de base: EN
 %inv NT BT # NT, BT sao relacoes inversas a NT B => b BT a
+%inv BT NT
 
 #conceitos:
 animal # termo na baselang
@@ -14,8 +15,7 @@ BT Life being # BT = broader term = termo generico
 
 cat
 PT gato 
-BT animal
 SN animal que tem sete vidas e m(e)ia 
-GOT jon snow
+ALIAS miau miau
 
 #comentario # desde o simbolo ’#’ ate ao fim da linha

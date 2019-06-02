@@ -48,7 +48,7 @@ void unmkProp( Prop p ){
 %type <prop> Property
 %%
 
-Thesaurus 	: Start Specs Concepts Remaining { showThesaurus(saurus); }
+Thesaurus 	: Start Specs Concepts Remaining { showThesaurus(saurus); unmkThesaurus(saurus); }
 			;
 
 Start 		:								 { saurus = mkThesaurus(); }

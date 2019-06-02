@@ -21,10 +21,6 @@ void showRelation( Relation r ){
     printf("\t%s \n ", r->name);
 }
 
-char* getRelationName( Relation r ){
-    return strdup(r->name);
-}
-
 Relation clone( Relation rel ){
 
     return mkRelation(rel->name);
