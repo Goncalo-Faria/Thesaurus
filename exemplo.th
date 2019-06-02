@@ -1,10 +1,11 @@
-%language PT EN # linguas: PT EN
+%language PT EN FR # linguas: PT EN
 %baselang EN # lingua de base: EN
 %inv NT BT # NT, BT sao relacoes inversas a NT B => b BT a
 
 #conceitos:
 animal # termo na baselang
 PT animal # LINGUA termo
+FR shcours
 NT cat, dog, cow, # NT = narrow term = termo especifico
 fish, ant # new
 NT camel # new
@@ -15,5 +16,6 @@ cat
 PT gato 
 BT animal
 SN animal que tem sete vidas e m(e)ia 
+GOT jon snow
 
 #comentario # desde o simbolo ’#’ ate ao fim da linha

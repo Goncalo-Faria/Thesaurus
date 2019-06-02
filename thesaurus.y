@@ -7,8 +7,8 @@
 
 
 typedef struct property{
-	Relation r;
-	GList * concepts;
+	char * r;
+	GList * concepts;/* list<char*>*/
 } *Prop;
 
 void yyerror(char* s);
@@ -17,13 +17,14 @@ Thesaurus saurus;
 
 Prop mkProp(const char* relationname, GList* list){
 	Prop p = (Prop)malloc(sizeof(struct property));
-	p->r = getRelation(saurus,relationname);
+	p->r = strdup(relationname);
 	p->concepts = list;
 	return p;
 }
 
 void unmkProp( Prop p ){
-	g_list_free(p->concepts);
+	free(p->r);
+	g_list_free_full(p->concepts,free);
 	free(p);
 }
 
@@ -58,14 +59,14 @@ Specs		: Specs Spec					 { ; }
 			;
 
 Spec 		: LANGDEC Langs					 { ; }
-			| BASELANGDEC LANG				 { ; }
+			| BASELANGDEC LANG				 { setBaseLanguage(saurus,$2); }
 			| RELATE LANG LANG				 { 
 				relateRaw(saurus,$2,$3); 	
 			}
 			;
 	
-Langs		: Langs LANG					{ ; }
-			| LANG							{ ; }
+Langs		: Langs LANG					{ addLanguage(saurus, $2); }
+			| LANG							{ addLanguage(saurus, $1); }
 			;
 
 Concepts 	: Concepts Concept				{ ; }
@@ -83,7 +84,7 @@ Concept		: NEWLINE WORD Properties		{
 					Prop tup = (Prop)cur->data;
 
 					for(GList* innercur = tup->concepts; innercur; innercur= innercur->next )
-						associate(saurus, cpt, tup->r, (Concept)innercur->data);
+						associate(saurus, cpt, tup->r, (char *)innercur->data);
 
 					unmkProp(tup);
 				}
@@ -109,10 +110,10 @@ Property	: LANG ConceptList				{
 			;
 
 ConceptList : ConceptList SEPARATOR Terms	{
-				$$ = g_list_prepend($1  , getConcept(saurus,$3));
+				$$ = g_list_prepend($1  , strdup($3));
 			}
 			| Terms					    	{
-				$$ = g_list_prepend(NULL, getConcept(saurus,$1));
+				$$ = g_list_prepend(NULL, strdup($1));
 			}
 			;
 

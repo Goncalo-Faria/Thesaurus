@@ -18,4 +18,6 @@ int equalRelation( Relation a, Relation b);
 
 void showRelation( Relation cpt );
 
+char * getRelationName( Relation r);
+
 #endif

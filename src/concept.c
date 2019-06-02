@@ -5,6 +5,7 @@
 typedef struct concept{
     char * name;
     GHashTable * related; /* Map<Relation, Set<Concept> >*/
+    GHashTable * translation; /* Map<lang, translation> */
 } *Concept;
 
 Concept mkConcept( const char * name ){
@@ -17,16 +18,40 @@ Concept mkConcept( const char * name ){
         unmkRelation,
         g_hash_table_destroy 
     );
+    cpt->translation = g_hash_table_new_full(
+        g_str_hash,
+        g_str_equal,
+        free,
+        free
+    );
 
     return cpt;
 }
 
 void showConcept( Concept cpt ){
     
-    GList * rlist = g_hash_table_get_keys(cpt->related);
-    GList * cslist = g_hash_table_get_values(cpt->related);
+    GList * rwrlist = g_hash_table_get_keys(cpt->related);
+    GList * rwcslist = g_hash_table_get_values(cpt->related);
+
+    GList * rlist = rwrlist;
+    GList * cslist = rwcslist;
 
     printf("%s ->\n", cpt->name);
+
+    GList * rwtransk = g_hash_table_get_keys(cpt->translation);
+    GList * rwtransv = g_hash_table_get_values(cpt->translation);
+    GList * transk = rwtransk;
+    GList * transv = rwtransv;
+
+    while( transk && transv ){
+        printf("\t%s =====> %s \n", (char*)transk->data, (char*)transv->data);
+
+        transv = transv->next;
+        transk = transk->next;
+    }
+
+    g_list_free(rwtransk);
+    g_list_free(rwtransv);
 
     while( rlist && cslist ){
         Relation r = (Relation)rlist->data;
@@ -36,7 +61,7 @@ void showConcept( Concept cpt ){
         showRelation(r);
         for( GList* cur = clist; cur; cur = cur->next ){
             Concept innercn = (Concept)cur->data;    
-            printf("\t\t : %s \n",innercn->name);
+            printf("\t  : %s \n",innercn->name);
         }
 
         g_list_free(clist);
@@ -44,10 +69,18 @@ void showConcept( Concept cpt ){
         cslist = cslist->next;
     }
 
-    g_list_free(rlist);
-    g_list_free(cslist);
+    g_list_free(rwrlist);
+    g_list_free(rwcslist);
+
 }
 
+void translation( Concept cpt, const char * lang, const char * translated ){
+    g_hash_table_insert(
+        cpt->translation, 
+        strdup(lang), 
+        strdup(translated)
+    );
+}
 
 unsigned int hashConcept( Concept key ){
     return g_str_hash(key->name);
@@ -69,6 +102,8 @@ ConceptSet newConceptSetfromHashTable(){
 void unmkConcept( Concept cpt ){
     free(cpt->name);
     g_hash_table_destroy(cpt->related);
+    g_hash_table_destroy(cpt->translation);
+    free(cpt);
 }
 
 /*

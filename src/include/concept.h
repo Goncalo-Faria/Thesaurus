@@ -15,4 +15,6 @@ ConceptSet newConceptSetfromHashTable();
 
 void showConcept( Concept cpt );
 
+void translation( Concept cpt, const char * lang, const char * translated );
+
 #endif

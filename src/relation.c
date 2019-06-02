@@ -13,13 +13,16 @@ Relation mkRelation( const char * name ){
 }
 
 void unmkRelation( Relation r){
-    
-    free(r);
     free(r->name);
+    free(r);
 }
 
 void showRelation( Relation r ){
-    printf("\t %s \n ", r->name);
+    printf("\t%s \n ", r->name);
+}
+
+char* getRelationName( Relation r ){
+    return strdup(r->name);
 }
 
 Relation clone( Relation rel ){

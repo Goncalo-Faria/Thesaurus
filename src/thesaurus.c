@@ -3,25 +3,52 @@
 #include <glib.h>
 
 typedef struct thesaurus{
-    //char * baselanguage;
-    //GHashTable * translation; < language, translation >
+    char * baselanguage;
+    GHashTable * suportedLanguages;
     GHashTable * concepts; /* Map<char* Concept>*/
     GHashTable * relations; /* Map< Relation, Set<Relation> >*/
 } *Thesaurus;
 
+void setBaseLanguage(Thesaurus saurus, const char * lang){
+    saurus->baselanguage = strdup(lang);
+}
+
+void addLanguage(Thesaurus saurus, const char* lang){
+    char * cpy = strdup(lang);
+    g_hash_table_insert(saurus->suportedLanguages, cpy, cpy);
+}
+
 Thesaurus mkThesaurus(){
     Thesaurus ths = (Thesaurus)malloc(sizeof(struct thesaurus));
-    ths->concepts = g_hash_table_new_full( g_str_hash, g_str_equal, free, unmkConcept);
+    ths->concepts = g_hash_table_new_full(
+        g_str_hash, 
+        g_str_equal, 
+        free, 
+        unmkConcept);
     ths->relations = g_hash_table_new_full( 
         hashRelation, 
         equalRelation, 
         unmkRelation,
         g_hash_table_destroy 
     );
-    
+
+    ths->suportedLanguages = g_hash_table_new_full(
+        g_str_hash, 
+        g_str_equal,
+        free,
+        NULL 
+    );
+
     return ths;
 }
 
+void unmkThesaurus( Thesaurus saurus ){
+    g_hash_table_destroy(saurus->concepts);
+    g_hash_table_destroy(saurus->relations);
+    g_hash_table_destroy(saurus->suportedLanguages);
+    free(saurus->baselanguage);
+    free(saurus);
+}
 /*
 void addLanguage( Thesaurus saurus, char * lang ){
     GString slan = g_string_new( lang );
@@ -34,10 +61,20 @@ void showThesaurus(Thesaurus saurus){
     int number_of_concepts = g_hash_table_size(saurus->concepts);
     int number_of_relations = g_hash_table_size(saurus->relations);
 
+    printf("baselanguage : %s\n", saurus->baselanguage);
+    
+    GList* langs = g_hash_table_get_values(saurus->suportedLanguages);
+
+    printf("\tsupported languages");
+    for(GList * cur= langs; cur; cur = cur->next )
+        printf(" %s",(char*)cur->data);
+
+    printf("\n");
+    g_list_free(langs); 
 
     GList * concepts = g_hash_table_get_values(saurus->concepts);
 
-    for(GList* cur = concepts; cur; cur = cur->next)
+    for(GList * cur = concepts; cur; cur = cur->next)
         showConcept( (Concept)cur->data );
 
     g_list_free(concepts);
@@ -69,14 +106,14 @@ Relation getRelation( Thesaurus saurus, const char* relationname ){
     
     Relation result = mkRelation(relationname);
 
-    if( !g_hash_table_contains(saurus->relations, result) ){
+    if( !g_hash_table_contains(saurus->relations, result) &&
+                !g_hash_table_contains(saurus->suportedLanguages, relationname) ){
         g_hash_table_insert(
             saurus->relations, 
-            result, 
+            mkRelation(relationname), 
             newRelationSetfromHashTable() 
         );
     }
-
     return result;
 }
 
@@ -120,14 +157,25 @@ void relate( Thesaurus saurus, Relation subclasse/*NT - tem de ser avisado */, R
     g_hash_table_insert(rl, cpy, cpy);
 }
 
-void associate(Thesaurus saurus, Concept source, Relation r, Concept associatee){
+void associate(Thesaurus saurus, Concept source, const char * relation, const char * assoc){
     
-    linkConcepts( source, r, associatee);
-    RelationSet rs = g_hash_table_lookup( saurus->relations, r);
-    GList * relationlisting = g_hash_table_get_keys(rs);
+    if( g_hash_table_contains(saurus->suportedLanguages, relation) ){
 
-    for( GList * cur = relationlisting; cur ; cur = cur->next )
-    linkConcepts(associatee, (Relation)cur->data, source);
+        translation( source, relation, assoc);
+
+    }else{
+
+        Relation r = getRelation(saurus, relation);
+        Concept associatee = getConcept(saurus, assoc);
+
+        linkConcepts( source, r, associatee);
+        RelationSet rs = g_hash_table_lookup( saurus->relations, r);
+        GList * relationlisting = g_hash_table_get_keys(rs);
+
+        for( GList * cur = relationlisting; cur ; cur = cur->next )
+            linkConcepts(associatee, (Relation)cur->data, source);
     
-    g_list_free(relationlisting);
+        g_list_free(relationlisting);
+    }
+
 }
