@@ -49,7 +49,10 @@ void unmkProp( Prop p ){
 %type <prop> Property
 %%
 
-Thesaurus 	: Start Specs Concepts Remaining { showOntology(saurus); unmkOntology(saurus); }
+Thesaurus 	: Start Specs Concepts Remaining { 
+				showOntology(saurus); 
+				unmkOntology(saurus); 
+				}
 			;
 
 Start 		:								 { saurus = mkOntology(); }

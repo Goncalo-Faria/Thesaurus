@@ -19,7 +19,7 @@ char* strtolower( char * str ){
 \%title                     { return TITLE; }
 \#[^\n]*                    { ; /*comment*/}
 ,                           { return SEPARATOR;}
-[A-Z][A-Z]+				    {   
+[A-Z][A-Z]+/[" "\n#] 	 	{   
                                 yylval.string = strdup(yytext); 
                                 return LANG;
                                 /*language identifier*/
