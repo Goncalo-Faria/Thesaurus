@@ -2,6 +2,7 @@
 %baselang EN # lingua de base: EN
 %inv NT BT # NT, BT sao relacoes inversas a NT B => b BT a
 %inv BT NT
+%title Guantanamo Bay
 
 #conceitos:
 animal # termo na baselang

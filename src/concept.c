@@ -82,6 +82,59 @@ void translation( Concept cpt, const char * lang, const char * translated ){
     );
 }
 
+int isRelatedBy( Concept cpt, Relation edge){
+    return g_hash_table_contains(cpt->related, edge);
+}
+
+void fillConceptHistogram(Concept cpt, Relation edge, GHashTable * conceptHist){
+    if( g_hash_table_contains(cpt->related,edge) ){
+        ConceptSet cs = g_hash_table_lookup(cpt->related,edge);
+        GList* cskeys = g_hash_table_get_keys(cs);
+        
+        for( GList* cur = cskeys; cur; cur = cur->next){
+            Concept tmpcpt = (Concept)cur->data;
+            if( g_hash_table_contains(conceptHist,tmpcpt) ){
+                int *count = g_hash_table_lookup(conceptHist,tmpcpt);
+                *count = *count + 1;
+            }else{
+
+                int * count = (int*)malloc(sizeof(int));
+                *count = 1;
+                g_hash_table_insert(
+                    conceptHist, 
+                    tmpcpt, 
+                    count);
+
+            }
+        } 
+        g_list_free(cskeys);
+    }
+}
+
+/*
+    Identifica os arcos(relações) que ligam os dois vértices (conceitos).
+*/
+GList * identifyRelations(Concept origin, Concept dest){
+    GList* rslist = g_hash_table_get_keys(origin->related);
+    GList* solution = NULL;
+    
+    for( GList* cur = rslist; cur; cur = cur->next){
+        if( g_hash_table_contains(
+                (ConceptSet)g_hash_table_lookup(
+                    origin->related,
+                    (Relation)cur->data
+                ),
+                dest
+            ) 
+        )
+            solution = g_list_prepend(solution, cur->data);
+    }
+
+    g_list_free(rslist);
+
+    return solution;
+}
+
 unsigned int hashConcept( Concept key ){
     return g_str_hash(key->name);
 }

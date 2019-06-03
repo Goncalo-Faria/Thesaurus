@@ -35,6 +35,7 @@ void unmkProp( Prop p ){
 %token LANGDEC
 %token BASELANGDEC
 %token RELATE
+%token TITLE
 
 %token SEPARATOR
 %token NEWLINE
@@ -63,6 +64,7 @@ Spec 		: LANGDEC Langs					 { ; }
 			| RELATE LANG LANG				 { 
 				relateRaw(saurus,$2,$3); 	
 			}
+			| TITLE Terms					{ addTitle(saurus,$2); }
 			;
 	
 Langs		: Langs LANG					{ addLanguage(saurus, $2); }

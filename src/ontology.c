@@ -3,6 +3,7 @@
 #include <glib.h>
 
 typedef struct ontology{
+    char * title;
     char * baselanguage;
     GHashTable * suportedLanguages; /* Set<char *> */
     GHashTable * concepts; /* Map<char*, Concept>*/
@@ -16,6 +17,10 @@ void setBaseLanguage(Ontology saurus, const char * lang){
 void addLanguage(Ontology saurus, const char* lang){
     char * cpy = strdup(lang);
     g_hash_table_insert(saurus->suportedLanguages, cpy, cpy);
+}
+
+void addTitle(Ontology saurus, const char* title){
+    saurus->title = strdup(title);
 }
 
 Ontology mkOntology(){
@@ -38,15 +43,60 @@ Ontology mkOntology(){
         free,
         NULL 
     );
-
+    ths->baselanguage = NULL;
+    ths->title = NULL;
     return ths;
+}
+
+/*
+    Identifica os vértices (conceitos) que são a origem de arestas (relações) do tipo "edge" e não têm 
+    numa aresta desse tipo a incidir neles.
+
+    Estes vértices são os candidatos para serem a raiz de árvores.
+*/
+GList * findRelationalStartingPoints( Ontology saurus, Relation edge ){
+    
+    GList * solution = NULL;
+    if( g_hash_table_contains(saurus->relations,edge) ){
+        GList * concepts = g_hash_table_get_values(saurus->concepts);
+        GList * candidates = NULL;
+        GHashTable * conceptHist = g_hash_table_new_full(
+            hashConcept,
+            equalConcept,
+            NULL,
+            free);
+
+        for( GList * cur = concepts; cur; cur = cur->next){
+            Concept tmpcp = (Concept)cur->data;
+            if( isRelatedBy(tmpcp,edge) ){
+                candidates = g_list_prepend(candidates, tmpcp);
+                fillConceptHistogram(tmpcp, edge, conceptHist);
+            }
+        }
+        
+        for( GList * cur = candidates; cur; cur = cur->next){
+            if( !g_hash_table_contains( conceptHist, (Concept)cur->data) )
+                solution = g_list_prepend(solution, cur->data);
+            
+        }
+              
+        g_list_free(candidates);
+        g_list_free(concepts);
+    }
+
+    return solution;
 }
 
 void unmkOntology( Ontology saurus ){
     g_hash_table_destroy(saurus->concepts);
     g_hash_table_destroy(saurus->relations);
     g_hash_table_destroy(saurus->suportedLanguages);
-    free(saurus->baselanguage);
+    if( saurus->baselanguage )
+        free(saurus->baselanguage);
+    
+    if( saurus->title)
+        free(saurus->title);
+
     free(saurus);
 }
 /*
@@ -60,6 +110,8 @@ void showOntology(Ontology saurus){
 
     int number_of_concepts = g_hash_table_size(saurus->concepts);
     int number_of_relations = g_hash_table_size(saurus->relations);
+
+    printf("title : %s\n",saurus->title);
 
     printf("baselanguage : %s\n", saurus->baselanguage);
     

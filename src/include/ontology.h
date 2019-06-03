@@ -11,6 +11,7 @@ void showOntology( Ontology saurus);
 
 void setBaseLanguage( Ontology saurus, const char * lang);
 void addLanguage( Ontology saurus, const char * lang);
+void addTitle(Ontology saurus, const char* title);
 
 void unmkOntology( Ontology saurus );
 
