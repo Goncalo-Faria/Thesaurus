@@ -125,7 +125,7 @@ void showOntology(Ontology saurus){
 
     FILE *f = fopen("out/html/index.html", "w");
     if(f == NULL) {
-        printf("Error opening file!\n");
+        printf("Error opening file %s!\n", "out/html/index.html");
         exit(1);
     }
 
@@ -217,7 +217,7 @@ void showOntology(Ontology saurus){
     //Priting grafo in index page
     FILE *fa = fopen("out/html/index.html", "a");
     if(fa == NULL) {
-        printf("Error opening file!\n");
+        printf("Error opening file %s!\n", "out/html/index.html");
         exit(1);
     }
     fprintf(fa, "\t</div>\n");
@@ -268,7 +268,7 @@ void showOntology(Ontology saurus){
     //Close index.html
     FILE *fileClose = fopen("out/html/index.html", "a");
     if (fileClose == NULL) {
-        printf("Error opening file!\n");
+        printf("Error opening file %s!\n", "out/html/index.html");
         exit(1);
     }
     fprintf(fileClose, "\t</div>\n");
@@ -278,7 +278,7 @@ void showOntology(Ontology saurus){
     //Close index.html
     FILE *fClose = fopen("out/html/index.html", "a");
     if (fClose == NULL) {
-        printf("Error opening file!\n");
+        printf("Error opening file %s!\n", "out/html/index.html");
         exit(1);
     }
     fprintf(fClose, "\t</div>\n");

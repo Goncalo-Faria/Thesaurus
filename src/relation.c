@@ -22,7 +22,7 @@ void unmkRelation( Relation r){
 char * showRelation( Relation r, char * filename ){
     FILE *cptf = fopen(filename, "a");
     if(cptf == NULL) {
-        printf("Error opening file!\n");
+        printf("Error opening file %s!\n", filename);
         exit(1);
     }
 

@@ -48,7 +48,7 @@ void showConcept( Concept cpt ){
     //Finishing index.html
     FILE *f = fopen("out/html/index.html", "a");
     if(f == NULL) {
-        printf("Error opening file!\n");
+        printf("Error opening file %s!\n", "out/html/index.html");
         exit(1);
     }
 
@@ -70,7 +70,7 @@ void showConcept( Concept cpt ){
 
     FILE *cptf = fopen(filename, "w");
     if(cptf == NULL) {
-        printf("Error opening file!\n");
+        printf("Error opening file %s!\n", "out/html/%s.html", buffer);
         exit(1);
     }
 
