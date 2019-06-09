@@ -7,6 +7,9 @@ INCD := -I src/include
 thesaurus: y.tab.c lex.yy.c
 	$(CXX) -o $(EXEC) y.tab.c src/*.c $(FLAGS) $(GLIB) $(INCD)
 
+dots:
+	@cd out && $(MAKE)
+
 lex.yy.c: thesaurus.l
 	flex thesaurus.l
 
@@ -15,3 +18,5 @@ y.tab.c: thesaurus.y
 
 clean:
 	rm lex.yy.c y.tab.* $(EXEC) y.output
+	rm out/html/*.html
+	rm out/grafos/*.dot
