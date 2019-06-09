@@ -1,5 +1,6 @@
 # Thesaurus
 
+## Compiling and executing:
 
 ```
 make
@@ -11,4 +12,8 @@ make
 
 ```
 make dots
+```
+
+```
+open out/html/index.html
 ```
