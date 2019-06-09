@@ -274,25 +274,6 @@ void showOntology(Ontology saurus){
 
     g_list_free(concepts);
     fclose(makefile);
-
-    /*
-    GList * relationSet = g_hash_table_get_values(saurus->concepts);
-
-    for(GList* cur = relationSet; cur ; cur = cur->next ){
-        RelationSet rs = (RelationSet)cur->data;
-        GList * lrs = g_hash_table_get_keys(rs);
-
-        for(GList* innercur = lrs; innercur; innercur = innercur->next){
-            showRelation((Relation)innercur->data);
-        }
-
-        g_list_free(lrs),
-    }
-
-    g_list_free(relationSet);
-
-    printf(" num of concepts : %d, num of relations : %d \n",number_of_concepts, number_of_relations);
-    */
 }
 
 /*
