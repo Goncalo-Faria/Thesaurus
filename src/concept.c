@@ -97,6 +97,15 @@ void showConcept( Concept cpt ){
     g_list_free(rwtransk);
     g_list_free(rwtransv);
 
+    //Open the relation geral grafo
+    FILE *geralGrafo = fopen("out/grafos/grafo.dot", "a");
+    if (geralGrafo == NULL)
+    {
+        printf("Error opening file %s!\n", "out/grafos/grafo.dot");
+        exit(1);
+    }
+    //////
+
     while( rlist && cslist ){
         Relation r = (Relation)rlist->data;
         ConceptSet cs = (ConceptSet)cslist->data;
@@ -128,7 +137,10 @@ void showConcept( Concept cpt ){
             Concept innercn = (Concept)cur->data;
 
             //Print relation attribute to grafo file
-            fprintf(grafo, "\t\"%s\" -> \"%s\"\n", cpt->name, innercn->name);
+            fprintf(grafo, "\t\"%s\" -> \"%s\";\n", cpt->name, innercn->name);
+
+            //Print relation attribute to geral grafo file
+            fprintf(geralGrafo, "\t\"%s\" -> \"%s\" [label=\"%s\"];\n", cpt->name, innercn->name, relationName);
 
             //Print relation attribute to concept file
             fprintf(cptf, "\t\t<li>%s</li></br>\n", innercn->name);
