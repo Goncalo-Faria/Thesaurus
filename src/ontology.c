@@ -193,6 +193,14 @@ void showOntology(Ontology saurus){
     }
     fprintf(fa, "\t<h2><p align='center'><font color='#85C1E9'>Grafos das relações:</font></p></h2>\n");
 
+    //Grafos Makefile
+    FILE *makefile = fopen("out/Makefile", "w");
+    if(makefile == NULL) {
+        printf("Error opening file %s!\n", "out/Makefile");
+        exit(1);
+    }
+    fprintf(makefile, "all:\n");
+
     //Finish and close grafo files & save them to index.html
     for(GList* cur = relationSet; cur ; cur = cur->next ){
         RelationSet rs = (RelationSet)cur->data;
@@ -224,6 +232,9 @@ void showOntology(Ontology saurus){
 
             fprintf(grafoImage, "<center><img src='../grafos/%sgrafo.png' alt='Grafo' width='700' height='400'></center>", cenas);
 
+            //Grafos Makefile
+            fprintf(makefile, "\tdot -Tpng grafos/%sgrafo.dot > grafos/%sgrafo.png\n", cenas, cenas);
+
             //Print grafo hiperlink to index.html
             fprintf(fa, "\t\t<li><a href=\"%sgrafo.html\">%s</a></li></br>\n", cenas, cenas);
         }
@@ -233,8 +244,7 @@ void showOntology(Ontology saurus){
 
 
     g_list_free(concepts);
-
-
+    fclose(makefile);
 
     /*
     GList * relationSet = g_hash_table_get_values(saurus->concepts);

@@ -7,6 +7,9 @@ INCD := -I src/include
 thesaurus: y.tab.c lex.yy.c
 	$(CXX) -o $(EXEC) y.tab.c src/*.c $(FLAGS) $(GLIB) $(INCD)
 
+dots:
+	@cd out && $(MAKE)
+
 lex.yy.c: thesaurus.l
 	flex thesaurus.l
 
