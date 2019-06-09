@@ -270,7 +270,7 @@ void showOntology(Ontology saurus){
             //Grafos Makefile
             fprintf(makefile, "\tdot -Tpng grafos/%sgrafo.dot > grafos/%sgrafo.png\n", cenas, cenas);
 
-            //Print grafo hiperlink to index.html
+            //Print grafo hiperlink to index.html ##TODO
             fprintf(fa, "\t\t<li><a href=\"%sgrafo.html\">%s</a></li></br>\n", cenas, cenas);
         }
 

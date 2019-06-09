@@ -21,4 +21,18 @@ SN animal que tem sete vidas e m(e)ia
 SOUND miau miau
 RT lion
 
+grandfather
+PT avo
+RT father
+BT human
+
+father
+PT pai
+RT child
+BT human
+
+child
+PT crianca
+BT human
+
 #comentario # desde o simbolo ’#’ ate ao fim da linha
