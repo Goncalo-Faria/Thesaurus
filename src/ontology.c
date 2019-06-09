@@ -1,6 +1,8 @@
 #include "include/ontology.h"
 #include "include/relation.h"
 #include <glib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct ontology{
     char * title;
@@ -26,22 +28,22 @@ void addTitle(Ontology saurus, const char* title){
 Ontology mkOntology(){
     Ontology ths = (Ontology)malloc(sizeof(struct ontology));
     ths->concepts = g_hash_table_new_full(
-        g_str_hash, 
-        g_str_equal, 
-        free, 
+        g_str_hash,
+        g_str_equal,
+        free,
         unmkConcept);
-    ths->relations = g_hash_table_new_full( 
-        hashRelation, 
-        equalRelation, 
+    ths->relations = g_hash_table_new_full(
+        hashRelation,
+        equalRelation,
         unmkRelation,
-        g_hash_table_destroy 
+        g_hash_table_destroy
     );
 
     ths->suportedLanguages = g_hash_table_new_full(
-        g_str_hash, 
+        g_str_hash,
         g_str_equal,
         free,
-        NULL 
+        NULL
     );
     ths->baselanguage = NULL;
     ths->title = NULL;
@@ -49,13 +51,13 @@ Ontology mkOntology(){
 }
 
 /*
-    Identifica os vértices (conceitos) que são a origem de arestas (relações) do tipo "edge" e não têm 
+    Identifica os vértices (conceitos) que são a origem de arestas (relações) do tipo "edge" e não têm
     numa aresta desse tipo a incidir neles.
 
     Estes vértices são os candidatos para serem a raiz de árvores.
 */
 GList * findRelationalStartingPoints( Ontology saurus, Relation edge ){
-    
+
     GList * solution = NULL;
     if( g_hash_table_contains(saurus->relations,edge) ){
         GList * concepts = g_hash_table_get_values(saurus->concepts);
@@ -73,13 +75,13 @@ GList * findRelationalStartingPoints( Ontology saurus, Relation edge ){
                 fillConceptHistogram(tmpcp, edge, conceptHist);
             }
         }
-        
+
         for( GList * cur = candidates; cur; cur = cur->next){
             if( !g_hash_table_contains( conceptHist, (Concept)cur->data) )
                 solution = g_list_prepend(solution, cur->data);
-            
+
         }
-              
+
         g_list_free(candidates);
         g_list_free(concepts);
     }
@@ -93,7 +95,7 @@ void unmkOntology( Ontology saurus ){
     g_hash_table_destroy(saurus->suportedLanguages);
     if( saurus->baselanguage )
         free(saurus->baselanguage);
-    
+
     if( saurus->title)
         free(saurus->title);
 
@@ -108,28 +110,59 @@ void addLanguage( Ontology saurus, char * lang ){
 
 void showOntology(Ontology saurus){
 
+    FILE *f = fopen("out/html/index.html", "w");
+    if(f == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    //Inicializing
+    fprintf(f, "<!DOCTYPE html>\n<html>\n<head>\n\t<title>PL</title>\n");
+    fprintf(f, "\t<meta name='viewport' content='width=device-width, initial-scale=1'>\n");
+    fprintf(f, "\t<style>\n");
+    fprintf(f, "\t\tbody { max-width: 1300px; margin: auto; }\n");
+    fprintf(f, "\t</style>\n</head>\n");
+
+    //Body
+    fprintf(f, "<body>\n");
+    fprintf(f, "\t<h1><p align='center'><font color='#2874A6'>Ontologias</font></p></h1>\n");
+    fprintf(f, "\t<h4>\n");
+
     int number_of_concepts = g_hash_table_size(saurus->concepts);
     int number_of_relations = g_hash_table_size(saurus->relations);
 
-    printf("title : %s\n",saurus->title);
+    fprintf(f, "\t\t<u>Título:</u> %s</br></br>\n", saurus->title);
+    printf("title : %s\n", saurus->title);
 
+    fprintf(f, "\t\t<u>Linguagem base:</u> %s</br>\n", saurus->baselanguage);
     printf("baselanguage : %s\n", saurus->baselanguage);
-    
+
     GList* langs = g_hash_table_get_values(saurus->suportedLanguages);
 
     printf("\tsupported languages");
-    for(GList * cur= langs; cur; cur = cur->next )
+    fprintf(f, "\t\t<u>Linguagens suportadas:</u>");
+    for(GList * cur= langs; cur; cur = cur->next ){
         printf(" %s",(char*)cur->data);
+        fprintf(f, " %s", (char *)cur->data);
+    }
 
     printf("\n");
-    g_list_free(langs); 
+    g_list_free(langs);
+
+    fprintf(f, "\n\t</h4>\n");
+
+    fprintf(f, "\t<h2><p align='center'><font color='#85C1E9'>Conceitos:</font></p></h2>\n");
 
     GList * concepts = g_hash_table_get_values(saurus->concepts);
 
-    for(GList * cur = concepts; cur; cur = cur->next)
-        showConcept( (Concept)cur->data );
+    for(GList * cur = concepts; cur; cur = cur->next){
+        showConcept((Concept)cur->data);
+    }
 
     g_list_free(concepts);
+
+    //fprintf(f, "</body>\n");
+    //fprintf(f, "</html>\n");
 
     /*
     GList * relationSet = g_hash_table_get_values(saurus->concepts);
@@ -137,7 +170,7 @@ void showOntology(Ontology saurus){
     for(GList* cur = relationSet; cur ; cur = cur->next ){
         RelationSet rs = (RelationSet)cur->data;
         GList * lrs = g_hash_table_get_keys(rs);
-        
+
         for(GList* innercur = lrs; innercur; innercur = innercur->next){
             showRelation((Relation)innercur->data);
         }
@@ -146,7 +179,7 @@ void showOntology(Ontology saurus){
     }
 
     g_list_free(relationSet);
-        
+
     printf(" num of concepts : %d, num of relations : %d \n",number_of_concepts, number_of_relations);
     */
 }
@@ -155,15 +188,15 @@ void showOntology(Ontology saurus){
 adciona uma nova entrada ao conjunto de meta relações.
 */
 Relation getRelation( Ontology saurus, const char* relationname ){
-    
+
     Relation result = mkRelation(relationname);
 
     if( !g_hash_table_contains(saurus->relations, result) &&
                 !g_hash_table_contains(saurus->suportedLanguages, relationname) ){
         g_hash_table_insert(
-            saurus->relations, 
-            mkRelation(relationname), 
-            newRelationSetfromHashTable() 
+            saurus->relations,
+            mkRelation(relationname),
+            newRelationSetfromHashTable()
         );
     }
     return result;
@@ -174,11 +207,11 @@ Concept getConcept( Ontology saurus, const char* conceptname ){
     if( ! g_hash_table_contains(saurus->concepts, conceptname) ){
         g_hash_table_insert(
             saurus->concepts,
-            strdup(conceptname), 
+            strdup(conceptname),
             mkConcept(conceptname)
         );
     }
-  
+
     return (Concept)g_hash_table_lookup(saurus->concepts,conceptname);
 }
 
@@ -210,7 +243,7 @@ void relate( Ontology saurus, Relation subclasse/*NT - tem de ser avisado */, Re
 }
 
 void associate(Ontology saurus, Concept source, const char * relation, const char * assoc){
-    
+
     if( g_hash_table_contains(saurus->suportedLanguages, relation) ){
 
         translation( source, relation, assoc);
@@ -226,7 +259,7 @@ void associate(Ontology saurus, Concept source, const char * relation, const cha
 
         for( GList * cur = relationlisting; cur ; cur = cur->next )
             linkConcepts(associatee, (Relation)cur->data, source);
-    
+
         g_list_free(relationlisting);
     }
 

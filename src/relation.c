@@ -1,12 +1,14 @@
-#include <glib.h>
 #include "include/relation.h"
+#include <glib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct relation{
     char * name;
 } * Relation;
 
 Relation mkRelation( const char * name ){
-    
+
     Relation r = (Relation)malloc( sizeof(struct relation) );
     r->name = strdup(name);
     return r;
@@ -17,8 +19,17 @@ void unmkRelation( Relation r){
     free(r);
 }
 
-void showRelation( Relation r ){
+void showRelation( Relation r, char * filename ){
+    FILE *cptf = fopen(filename, "a");
+    if(cptf == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+
+    fprintf(cptf, "\t<h4><b>%s:</b></h4>\n", r->name);
     printf("\t%s \n ", r->name);
+
+    fclose(cptf);
 }
 
 Relation clone( Relation rel ){
@@ -32,7 +43,7 @@ unsigned int hashRelation( Relation key ){
 }
 
 int equalRelation( Relation a, Relation b){
-    
+
     return g_str_equal(a->name, b->name);
 }
 
@@ -42,6 +53,6 @@ RelationSet newRelationSetfromHashTable(){
         hashRelation,
         equalRelation,
         unmkRelation,
-        NULL 
+        NULL
     );
 }
