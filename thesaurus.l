@@ -17,6 +17,7 @@ char* strtolower( char * str ){
 \%baselang                  { return BASELANGDEC;/*declaring base language*/}
 \%inv                       { return RELATE; }
 \%title                     { return TITLE; }
+\%descriptor                { return DESCRIPTOR;}
 \#[^\n]*                    { ; /*comment*/}
 ,                           { return SEPARATOR;}
 [A-Z][A-Z]+/[" "\n#] 	 	{   

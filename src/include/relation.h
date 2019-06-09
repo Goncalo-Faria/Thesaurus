@@ -16,6 +16,8 @@ RelationSet newRelationSetfromHashTable();
 unsigned int hashRelation( Relation key );
 int equalRelation( Relation a, Relation b);
 
-void showRelation( Relation cpt );
+char * showRelation(Relation cpt, char *filename);
+
+char * getRelationName(Relation r);
 
 #endif

@@ -26,4 +26,6 @@ void fillConceptHistogram(Concept cpt, Relation edge, GHashTable * conceptHist);
 
 void translation( Concept cpt, const char * lang, const char * translated );
 
+void note( Concept cpt, const char * descriptor, const char * scopenote );
+
 #endif

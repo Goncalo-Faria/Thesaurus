@@ -15,6 +15,8 @@ void addTitle(Ontology saurus, const char* title);
 
 void unmkOntology( Ontology saurus );
 
+void addNoteSection(Ontology saurus, const char* notesection);
+
 Relation getRelation( Ontology saurus, const char* relationname );
 Concept getConcept( Ontology saurus, const char* conceptname );
 

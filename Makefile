@@ -15,3 +15,5 @@ y.tab.c: thesaurus.y
 
 clean:
 	rm lex.yy.c y.tab.* $(EXEC) y.output
+	rm out/html/*.html
+	rm out/grafos/*.dot

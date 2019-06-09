@@ -36,6 +36,7 @@ void unmkProp( Prop p ){
 %token BASELANGDEC
 %token RELATE
 %token TITLE
+%token DESCRIPTOR
 
 %token SEPARATOR
 %token NEWLINE
@@ -68,10 +69,15 @@ Spec 		: LANGDEC Langs					 { ; }
 				relateRaw(saurus,$2,$3); 	
 			}
 			| TITLE Terms					{ addTitle(saurus,$2); }
+			| DESCRIPTOR NSections			{ ; }
 			;
 	
 Langs		: Langs LANG					{ addLanguage(saurus, $2); }
 			| LANG							{ addLanguage(saurus, $1); }
+			;
+
+NSections   : NSections LANG				{ addNoteSection(saurus, $2); }
+			| LANG							{ addNoteSection(saurus, $1); }
 			;
 
 Concepts 	: Concepts Concept				{ ; }
@@ -79,7 +85,7 @@ Concepts 	: Concepts Concept				{ ; }
 			;
 
 Remaining 	: Remaining NEWLINE				{ ; }
-			| 								{ ; }
+			| NEWLINE						{ ; }
 			;
 
 Concept		: NEWLINE WORD Properties		{

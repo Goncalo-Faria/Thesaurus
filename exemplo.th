@@ -1,15 +1,16 @@
 %language PT EN FR # linguas: PT EN
 %baselang EN # lingua de base: EN
 %inv NT BT # NT, BT sao relacoes inversas a NT B => b BT a
-%inv BT ALIAS
+%inv BT NT
+%descriptor SOUND SN
 %title Guantanamo Bay
 
 #conceitos:
 animal # termo na baselang
 PT animal # LINGUA termo
-FR shcours
+FR animale
 NT cat, dog, cow, # NT = narrow term = termo especifico
-fish, ant # new
+fish, ant, human # new
 NT camel # new
 BT Life being # BT = broader term = termo generico
 # linha em branco : separador de conceitos
@@ -17,6 +18,7 @@ BT Life being # BT = broader term = termo generico
 cat
 PT gato 
 SN animal que tem sete vidas e m(e)ia 
-ALIAS miau miau
+SOUND miau miau
+RT lion
 
 #comentario # desde o simbolo ’#’ ate ao fim da linha
