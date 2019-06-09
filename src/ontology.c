@@ -166,28 +166,21 @@ void showOntology(Ontology saurus){
     g_list_free(langs);
 
     //Create and inicialize relations grafos
-    GList *relationSet = g_hash_table_get_values(saurus->relations);
-    for(GList* cur = relationSet; cur ; cur = cur->next ){
-        RelationSet rs = (RelationSet)cur->data;
-        GList * lrs = g_hash_table_get_keys(rs);
+    GList *relationSet = g_hash_table_get_keys(saurus->relations);
+    for (GList *cur = relationSet; cur; cur = cur->next){
+        char *name = getRelationName((Relation)cur->data);
 
-        for(GList* innercur = lrs; innercur; innercur = innercur->next){
-            char * cenas = getRelationName((Relation)innercur->data);
+        char grafoFilename[2000];
+        sprintf(grafoFilename, "out/grafos/%sgrafo.dot", name);
 
-            char grafoFilename[2000];
-            sprintf(grafoFilename, "out/grafos/%sgrafo.dot", cenas);
-
-            FILE *grafo = fopen(grafoFilename, "w");
-            if(grafo == NULL) {
-                printf("Error opening file %s!\n", grafoFilename);
-                exit(1);
-            }
-
-            fprintf(grafo, "digraph{\n");
-            fprintf(grafo, "\trankdir=BT;\n");
+        FILE *grafo = fopen(grafoFilename, "w");
+        if (grafo == NULL){
+            printf("Error opening file %s!\n", grafoFilename);
+            exit(1);
         }
 
-        g_list_free(lrs);
+        fprintf(grafo, "digraph{\n");
+        fprintf(grafo, "\trankdir=TB;\n");
     }
 
     fprintf(f, "\n\t</h4>\n");
@@ -197,7 +190,7 @@ void showOntology(Ontology saurus){
 
     //Grafo relation file
     FILE *geralGrafo = fopen("out/grafos/grafo.dot", "w");
-    if(geralGrafo == NULL) {
+    if (geralGrafo == NULL){
         printf("Error opening file %s!\n", geralGrafo);
         exit(1);
     }
@@ -211,7 +204,7 @@ void showOntology(Ontology saurus){
         printf("Error opening file %s!\n", "out/html/grafo.html");
         exit(1);
     }
-    fprintf(grafoHTML, "<center><img src='../grafos/grafo.png' alt='Grafo' width='700' height='400'></center>");
+    fprintf(grafoHTML, "<center><img src='../grafos/grafo.png' alt='Grafo'></center>");
     fclose(grafoHTML);
 
     //Print concepts
@@ -242,44 +235,45 @@ void showOntology(Ontology saurus){
 
     //Finish and close grafo files & save them to index.html
     for(GList* cur = relationSet; cur ; cur = cur->next ){
-        RelationSet rs = (RelationSet)cur->data;
-        GList * lrs = g_hash_table_get_keys(rs);
+        char *name = getRelationName((Relation)cur->data);
 
-        for(GList* innercur = lrs; innercur; innercur = innercur->next){
-            char * cenas = getRelationName((Relation)innercur->data);
-
-            //Close grafo relation file
-            char grafoFilename[2000];
-            sprintf(grafoFilename, "out/grafos/%sgrafo.dot", cenas);
-
-            FILE *grafo = fopen(grafoFilename, "a");
-            if(grafo == NULL) {
-                printf("Error opening file %s!\n", grafoFilename);
-                exit(1);
-            }
-            fprintf(grafo, "}\n");
-
-            //Grafo relation image page
-            char grafoImageFile[2000];
-            sprintf(grafoImageFile, "out/html/%sgrafo.html", cenas);
-
-            FILE *grafoImage = fopen(grafoImageFile, "a");
-            if(grafoImage == NULL) {
-                printf("Error opening file %s!\n", grafoImageFile);
-                exit(1);
-            }
-
-            fprintf(grafoImage, "<center><img src='../grafos/%sgrafo.png' alt='Grafo' width='700' height='400'></center>", cenas);
-
-            //Grafos Makefile
-            fprintf(makefile, "\tdot -Tpng grafos/%sgrafo.dot > grafos/%sgrafo.png\n", cenas, cenas);
-
-            //Print grafo hiperlink to index.html
-            fprintf(fa, "\t\t<li><a href=\"%sgrafo.html\">%s</a></li></br>\n", cenas, cenas);
+        //Close grafo relation file
+        char grafoFilename[2000];
+        sprintf(grafoFilename, "out/grafos/%sgrafo.dot", name);
+        FILE *grafo = fopen(grafoFilename, "a");
+        if(grafo == NULL) {
+            printf("Error opening file %s!\n", grafoFilename);
+            exit(1);
         }
+        fprintf(grafo, "}\n");
 
-        g_list_free(lrs);
+        //Grafo relation image page
+        char grafoImageFile[2000];
+        sprintf(grafoImageFile, "out/html/%sgrafo.html", name);
+        FILE *grafoImage = fopen(grafoImageFile, "w");
+        if(grafoImage == NULL) {
+            printf("Error opening file %s!\n", grafoImageFile);
+            exit(1);
+        }
+        fprintf(grafoImage, "<h1><p align='center'><font color='#2874A6'>%s</font></p></h1></br></br>\n", name);
+        fprintf(grafoImage, "<center><img src='../grafos/%sgrafo.png' alt='Grafo'></center>", name);
+
+        //Grafos Makefile
+        fprintf(makefile, "\tdot -Tpng grafos/%sgrafo.dot > grafos/%sgrafo.png\n", name, name);
+
+        //Print grafo hiperlink to index.html
+        fprintf(fa, "\t\t<li><a href=\"%sgrafo.html\">%s</a></li></br>\n", name, name);
     }
+
+    //Close index.html
+    FILE *fileClose = fopen("out/html/index.html", "a");
+    if (fileClose == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+    fprintf(fileClose, "\t</div>\n");
+    fprintf(fileClose, "</body>\n");
+    fprintf(fileClose, "</html>\n");
 
     //Close index.html
     FILE *fClose = fopen("out/html/index.html", "a");
