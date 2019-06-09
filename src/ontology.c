@@ -149,20 +149,92 @@ void showOntology(Ontology saurus){
     printf("\n");
     g_list_free(langs);
 
+    //Create and inicialize relations grafos
+    GList *relationSet = g_hash_table_get_values(saurus->relations);
+    for(GList* cur = relationSet; cur ; cur = cur->next ){
+        RelationSet rs = (RelationSet)cur->data;
+        GList * lrs = g_hash_table_get_keys(rs);
+
+        for(GList* innercur = lrs; innercur; innercur = innercur->next){
+            char * cenas = getRelationName((Relation)innercur->data);
+
+            char grafoFilename[2000];
+            sprintf(grafoFilename, "out/grafos/%sgrafo.dot", cenas);
+
+            FILE *grafo = fopen(grafoFilename, "w");
+            if(grafo == NULL) {
+                printf("Error opening file %s!\n", grafoFilename);
+                exit(1);
+            }
+
+            fprintf(grafo, "digraph{\n");
+            fprintf(grafo, "\trankdir=BT;\n");
+        }
+
+        g_list_free(lrs);
+    }
+
     fprintf(f, "\n\t</h4>\n");
-
     fprintf(f, "\t<h2><p align='center'><font color='#85C1E9'>Conceitos:</font></p></h2>\n");
+    fclose(f);
 
-    GList * concepts = g_hash_table_get_values(saurus->concepts);
+    //Print concepts
+    GList *concepts = g_hash_table_get_values(saurus->concepts);
 
     for(GList * cur = concepts; cur; cur = cur->next){
         showConcept((Concept)cur->data);
     }
 
+    //Priting grafo in index page
+    FILE *fa = fopen("out/html/index.html", "a");
+    if(fa == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+    fprintf(fa, "\t<h2><p align='center'><font color='#85C1E9'>Grafos das relações:</font></p></h2>\n");
+
+    //Finish and close grafo files & save them to index.html
+    for(GList* cur = relationSet; cur ; cur = cur->next ){
+        RelationSet rs = (RelationSet)cur->data;
+        GList * lrs = g_hash_table_get_keys(rs);
+
+        for(GList* innercur = lrs; innercur; innercur = innercur->next){
+            char * cenas = getRelationName((Relation)innercur->data);
+
+            //Grafo file
+            char grafoFilename[2000];
+            sprintf(grafoFilename, "out/grafos/%sgrafo.dot", cenas);
+
+            FILE *grafo = fopen(grafoFilename, "a");
+            if(grafo == NULL) {
+                printf("Error opening file %s!\n", grafoFilename);
+                exit(1);
+            }
+            fprintf(grafo, "}\n");
+
+            //Grafo image page
+            char grafoImageFile[2000];
+            sprintf(grafoImageFile, "out/html/%sgrafo.html", cenas);
+
+            FILE *grafoImage = fopen(grafoImageFile, "a");
+            if(grafoImage == NULL) {
+                printf("Error opening file %s!\n", grafoImageFile);
+                exit(1);
+            }
+
+            fprintf(grafoImage, "<center><img src='../grafos/%sgrafo.png' alt='Grafo' width='700' height='400'></center>", cenas);
+
+            //Print grafo hiperlink to index.html
+            fprintf(fa, "\t\t<li><a href=\"%sgrafo.html\">%s</a></li></br>\n", cenas, cenas);
+        }
+
+        g_list_free(lrs);
+    }
+
+
     g_list_free(concepts);
 
-    //fprintf(f, "</body>\n");
-    //fprintf(f, "</html>\n");
+
 
     /*
     GList * relationSet = g_hash_table_get_values(saurus->concepts);

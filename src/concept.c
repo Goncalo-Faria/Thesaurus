@@ -32,19 +32,19 @@ Concept mkConcept( const char * name ){
 
 void showConcept( Concept cpt ){
 
+    GList *rwrlist = g_hash_table_get_keys(cpt->related);
+    GList *rwcslist = g_hash_table_get_values(cpt->related);
+
+    GList *rlist = rwrlist;
+    GList *cslist = rwcslist;
+
+    //Finishing index.html
     FILE *f = fopen("out/html/index.html", "a");
     if(f == NULL) {
         printf("Error opening file!\n");
         exit(1);
     }
 
-    GList * rwrlist = g_hash_table_get_keys(cpt->related);
-    GList * rwcslist = g_hash_table_get_values(cpt->related);
-
-    GList * rlist = rwrlist;
-    GList * cslist = rwcslist;
-
-    //Finishing index.html
     char buffer[2000];
     char *ptr;
 
@@ -88,7 +88,7 @@ void showConcept( Concept cpt ){
 
     while( transk && transv ){
         fprintf(cptf, "\t\t<li>%s ==> %s</li></br>\n", (char *)transk->data, (char *)transv->data);
-        printf("\t%s =====> %s \n", (char*)transk->data, (char*)transv->data);
+        printf("\t%s =====> %s \n", (char*)transk->data, (char *)transv->data);
 
         transv = transv->next;
         transk = transk->next;
@@ -100,22 +100,37 @@ void showConcept( Concept cpt ){
     while( rlist && cslist ){
         Relation r = (Relation)rlist->data;
         ConceptSet cs = (ConceptSet)cslist->data;
-
         GList * clist = g_hash_table_get_keys(cs);
 
         fclose(cptf);
-        showRelation(r, filename);
+        char * relationName = showRelation(r, filename);
 
-        //Open the file again
+        //Open the concept file again
         FILE *cptf = fopen(filename, "a");
         if(cptf == NULL) {
-            printf("Error opening file!\n");
+            printf("Error opening file %s!\n", filename);
             exit(1);
         }
+        //////
+
+        //Create/Open the relation grafo
+        char grafoFilename[2000];
+        sprintf(grafoFilename, "out/grafos/%sgrafo.dot", relationName);
+
+        FILE *grafo = fopen(grafoFilename, "a");
+        if(grafo == NULL) {
+            printf("Error opening file %s!\n", grafoFilename);
+            exit(1);
+        }
+        //////
 
         for( GList* cur = clist; cur; cur = cur->next ){
             Concept innercn = (Concept)cur->data;
 
+            //Print relation attribute to grafo file
+            fprintf(grafo, "\t\"%s\" -> \"%s\"\n", cpt->name, innercn->name);
+
+            //Print relation attribute to concept file
             fprintf(cptf, "\t\t<li>%s</li></br>\n", innercn->name);
             printf("\t  : %s \n",innercn->name);
         }
@@ -123,11 +138,7 @@ void showConcept( Concept cpt ){
         g_list_free(clist);
         rlist = rlist->next;
         cslist = cslist->next;
-
-        fprintf(cptf, "</body>\n");
-        fprintf(cptf, "</html>\n");
     }
-
 
     g_list_free(rwrlist);
     g_list_free(rwcslist);

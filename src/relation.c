@@ -19,7 +19,7 @@ void unmkRelation( Relation r){
     free(r);
 }
 
-void showRelation( Relation r, char * filename ){
+char * showRelation( Relation r, char * filename ){
     FILE *cptf = fopen(filename, "a");
     if(cptf == NULL) {
         printf("Error opening file!\n");
@@ -30,6 +30,12 @@ void showRelation( Relation r, char * filename ){
     printf("\t%s \n ", r->name);
 
     fclose(cptf);
+
+    return r->name;
+}
+
+char * getRelationName( Relation r ){
+    return r->name;
 }
 
 Relation clone( Relation rel ){
