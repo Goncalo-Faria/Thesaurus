@@ -180,7 +180,7 @@ void showOntology(Ontology saurus){
         }
 
         fprintf(grafo, "digraph{\n");
-        fprintf(grafo, "\trankdir=BT;\n");
+        fprintf(grafo, "\trankdir=TB;\n");
     }
 
     fprintf(f, "\n\t</h4>\n");
