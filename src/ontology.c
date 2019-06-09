@@ -144,8 +144,10 @@ void showOntology(Ontology saurus){
     int number_of_concepts = g_hash_table_size(saurus->concepts);
     int number_of_relations = g_hash_table_size(saurus->relations);
 
-    fprintf(f, "\t\t<u>Título:</u> %s</br></br>\n", saurus->title);
+    fprintf(f, "\t\t<u>Título:</u> %s</br>\n", saurus->title);
     printf("title : %s\n", saurus->title);
+
+    fprintf(f, "\t\t<p align='right'><a href=\"grafo.html\">Ver grafo geral</a></p>\n");
 
     fprintf(f, "\t\t<u>Linguagem base:</u> %s</br>\n", saurus->baselanguage);
     printf("baselanguage : %s\n", saurus->baselanguage);
@@ -191,6 +193,25 @@ void showOntology(Ontology saurus){
     fprintf(f, "\t<h2><p align='center'><font color='#85C1E9'>Conceitos:</font></p></h2>\n");
     fclose(f);
 
+    //Grafo relation file
+    FILE *geralGrafo = fopen("out/grafos/grafo.dot", "w");
+    if(geralGrafo == NULL) {
+        printf("Error opening file %s!\n", geralGrafo);
+        exit(1);
+    }
+    fprintf(geralGrafo, "digraph{\n");
+    fprintf(geralGrafo, "\trankdir=TB;\n");
+    fclose(geralGrafo);
+
+    //Grafo geral HTML
+    FILE *grafoHTML = fopen("out/html/grafo.html", "w");
+    if (grafoHTML == NULL){
+        printf("Error opening file %s!\n", "out/html/grafo.html");
+        exit(1);
+    }
+    fprintf(grafoHTML, "<center><img src='../grafos/grafo.png' alt='Grafo' width='700' height='400'></center>");
+    fclose(grafoHTML);
+
     //Print concepts
     GList *concepts = g_hash_table_get_values(saurus->concepts);
 
@@ -206,6 +227,15 @@ void showOntology(Ontology saurus){
     }
     fprintf(fa, "\t<h2><p align='center'><font color='#85C1E9'>Grafos das relações:</font></p></h2>\n");
 
+    //Grafos Makefile
+    FILE *makefile = fopen("out/Makefile", "w");
+    if(makefile == NULL) {
+        printf("Error opening file %s!\n", "out/Makefile");
+        exit(1);
+    }
+    fprintf(makefile, "all:\n");
+    fprintf(makefile, "\tdot -Tpng grafos/grafo.dot > grafos/grafo.png\n");
+
     //Finish and close grafo files & save them to index.html
     for(GList* cur = relationSet; cur ; cur = cur->next ){
         RelationSet rs = (RelationSet)cur->data;
@@ -214,7 +244,7 @@ void showOntology(Ontology saurus){
         for(GList* innercur = lrs; innercur; innercur = innercur->next){
             char * cenas = getRelationName((Relation)innercur->data);
 
-            //Grafo file
+            //Close grafo relation file
             char grafoFilename[2000];
             sprintf(grafoFilename, "out/grafos/%sgrafo.dot", cenas);
 
@@ -225,7 +255,7 @@ void showOntology(Ontology saurus){
             }
             fprintf(grafo, "}\n");
 
-            //Grafo image page
+            //Grafo relation image page
             char grafoImageFile[2000];
             sprintf(grafoImageFile, "out/html/%sgrafo.html", cenas);
 
@@ -237,6 +267,9 @@ void showOntology(Ontology saurus){
 
             fprintf(grafoImage, "<center><img src='../grafos/%sgrafo.png' alt='Grafo' width='700' height='400'></center>", cenas);
 
+            //Grafos Makefile
+            fprintf(makefile, "\tdot -Tpng grafos/%sgrafo.dot > grafos/%sgrafo.png\n", cenas, cenas);
+
             //Print grafo hiperlink to index.html
             fprintf(fa, "\t\t<li><a href=\"%sgrafo.html\">%s</a></li></br>\n", cenas, cenas);
         }
@@ -244,29 +277,16 @@ void showOntology(Ontology saurus){
         g_list_free(lrs);
     }
 
+    //Close geral grafo file
+    FILE *geralGrafoClose = fopen("out/grafos/grafo.dot", "a");
+    if(geralGrafoClose == NULL) {
+        printf("Error opening file %s!\n", "out/grafos/grafo.dot");
+        exit(1);
+    }
+    fprintf(geralGrafoClose, "}\n");
 
     g_list_free(concepts);
-
-
-
-    /*
-    GList * relationSet = g_hash_table_get_values(saurus->concepts);
-
-    for(GList* cur = relationSet; cur ; cur = cur->next ){
-        RelationSet rs = (RelationSet)cur->data;
-        GList * lrs = g_hash_table_get_keys(rs);
-
-        for(GList* innercur = lrs; innercur; innercur = innercur->next){
-            showRelation((Relation)innercur->data);
-        }
-
-        g_list_free(lrs),
-    }
-
-    g_list_free(relationSet);
-
-    printf(" num of concepts : %d, num of relations : %d \n",number_of_concepts, number_of_relations);
-    */
+    fclose(makefile);
 }
 
 /*
