@@ -1,0 +1,5 @@
+#!/bin/bash
+make
+./thesaurus < $1
+make dots
+open out/html/index.html

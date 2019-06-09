@@ -2,18 +2,38 @@
 
 ## Compiling and executing:
 
+First change the permissions:
+
 ```
-make
+chmod 755 run
+```
+
+And then:
+
+```
+> ./run exemplo.th
+```
+
+OR:
+
+```
+> make
 ```
 
 ```
-./thesaurus < exemplo.th
+> ./thesaurus < exemplo.th
 ```
 
 ```
-make dots
+> make dots
 ```
 
 ```
-open out/html/index.html
+> open out/html/index.html
+```
+
+## Cleaning:
+
+```
+> make clean
 ```
