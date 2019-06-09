@@ -64,7 +64,7 @@ Ontology mkOntology(){
 }
 
 /*
-    Identifica os vértices (conceitos) que são a origem de arestas (relações) do tipo "edge" e não têm 
+    Identifica os vértices (conceitos) que são a origem de arestas (relações) do tipo "edge" e não têm
     uma aresta desse tipo a incidir neles.
 
     Estes vértices são os candidatos para serem a raiz de árvores.
@@ -134,6 +134,7 @@ void showOntology(Ontology saurus){
     fprintf(f, "\t<meta name='viewport' content='width=device-width, initial-scale=1'>\n");
     fprintf(f, "\t<style>\n");
     fprintf(f, "\t\tbody { max-width: 1300px; margin: auto; }\n");
+    fprintf(f, "\t\t.colunas { line-height: 200%; margin-left: 60px; -webkit-column-count: 2; -moz-column-count: 2; column-count: 2; }\n");
     fprintf(f, "\t</style>\n</head>\n");
 
     //Body
@@ -191,6 +192,7 @@ void showOntology(Ontology saurus){
 
     fprintf(f, "\n\t</h4>\n");
     fprintf(f, "\t<h2><p align='center'><font color='#85C1E9'>Conceitos:</font></p></h2>\n");
+    fprintf(f, "\t<div class='colunas'>\n");
     fclose(f);
 
     //Grafo relation file
@@ -225,7 +227,9 @@ void showOntology(Ontology saurus){
         printf("Error opening file!\n");
         exit(1);
     }
-    fprintf(fa, "\t<h2><p align='center'><font color='#85C1E9'>Grafos das relações:</font></p></h2>\n");
+    fprintf(fa, "\t</div>\n");
+    fprintf(fa, "\t</br><h2><p align='center'><font color='#85C1E9'>Grafos das relações:</font></p></h2>\n");
+    fprintf(fa, "\t<div class='colunas'>\n");
 
     //Grafos Makefile
     FILE *makefile = fopen("out/Makefile", "w");
@@ -277,6 +281,16 @@ void showOntology(Ontology saurus){
         g_list_free(lrs);
     }
 
+    //Close index.html
+    FILE *fClose = fopen("out/html/index.html", "a");
+    if (fClose == NULL) {
+        printf("Error opening file!\n");
+        exit(1);
+    }
+    fprintf(fClose, "\t</div>\n");
+    fprintf(fClose, "</body>\n");
+    fprintf(fClose, "</html>\n");
+
     //Close geral grafo file
     FILE *geralGrafoClose = fopen("out/grafos/grafo.dot", "a");
     if(geralGrafoClose == NULL) {
@@ -297,7 +311,7 @@ Relation getRelation( Ontology saurus, const char* relationname ){
     Relation result = mkRelation(relationname);
 
     if( !g_hash_table_contains(saurus->relations, result) &&
-            !g_hash_table_contains(saurus->suportedLanguages, relationname) && 
+            !g_hash_table_contains(saurus->suportedLanguages, relationname) &&
                 !g_hash_table_contains(saurus->noteSections, relationname) ){
         g_hash_table_insert(
             saurus->relations,
@@ -355,7 +369,7 @@ void associate(Ontology saurus, Concept source, const char * relation, const cha
         translation( source, relation, assoc);
 
     }else if( g_hash_table_contains(saurus->noteSections, relation) ) {
-        
+
         note( source, relation, assoc);
 
     }else{
