@@ -1,7 +1,7 @@
 %language PT EN FR # linguas: PT EN
 %baselang EN # lingua de base: EN
 %inv NT BT # NT, BT sao relacoes inversas a NT B => b BT a
-%inv BT NT
+%inv BT ALIAS
 %title Guantanamo Bay
 
 #conceitos:

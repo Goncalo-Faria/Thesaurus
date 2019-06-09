@@ -78,8 +78,8 @@ Concepts 	: Concepts Concept				{ ; }
 			| Concept						{ ; }
 			;
 
-Remaining 	: Remaining NEWLINE
-			| NEWLINE
+Remaining 	: Remaining NEWLINE				{ ; }
+			| 								{ ; }
 			;
 
 Concept		: NEWLINE WORD Properties		{

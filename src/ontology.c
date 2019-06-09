@@ -50,7 +50,7 @@ Ontology mkOntology(){
 
 /*
     Identifica os vértices (conceitos) que são a origem de arestas (relações) do tipo "edge" e não têm 
-    numa aresta desse tipo a incidir neles.
+    uma aresta desse tipo a incidir neles.
 
     Estes vértices são os candidatos para serem a raiz de árvores.
 */
