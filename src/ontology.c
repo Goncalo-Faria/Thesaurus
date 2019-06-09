@@ -275,16 +275,6 @@ void showOntology(Ontology saurus){
     fprintf(fileClose, "</body>\n");
     fprintf(fileClose, "</html>\n");
 
-    //Close index.html
-    FILE *fClose = fopen("out/html/index.html", "a");
-    if (fClose == NULL) {
-        printf("Error opening file %s!\n", "out/html/index.html");
-        exit(1);
-    }
-    fprintf(fClose, "\t</div>\n");
-    fprintf(fClose, "</body>\n");
-    fprintf(fClose, "</html>\n");
-
     //Close geral grafo file
     FILE *geralGrafoClose = fopen("out/grafos/grafo.dot", "a");
     if(geralGrafoClose == NULL) {
