@@ -89,11 +89,12 @@ void showConcept( Concept cpt ){
     GList * transk = rwtransk;
     GList * transv = rwtransv;
 
+    //Print translations
     if( transk && transv ){
-        fprintf(cptf, "\t<h4><b>Translations:</b></h4>\n");
+        fprintf(cptf, "\t<h4><b>Traduções:</b></h4>\n");
     }
 
-    while( transk && transv ){
+    while(transk && transv){
         fprintf(cptf, "\t\t<li>%s ==> %s</li></br>\n", (char *)transk->data, (char *)transv->data);
         printf("\t%s =====> %s \n", (char*)transk->data, (char *)transv->data);
 
@@ -104,6 +105,27 @@ void showConcept( Concept cpt ){
     g_list_free(rwtransk);
     g_list_free(rwtransv);
 
+    //Print notes
+    GList *rwnotesk = g_hash_table_get_keys(cpt->notes);
+    GList *rwnotesv = g_hash_table_get_values(cpt->notes);
+    GList *notesk = rwnotesk;
+    GList *notesv = rwnotesv;
+
+    if (notesk && notesv){
+        fprintf(cptf, "\t<h4><b>Notas:</b></h4>\n");
+    }
+
+    while (notesk && notesv){
+        fprintf(cptf, "\t\t<li>%s ==> %s</li></br>\n", (char *)notesk->data, (char *)notesv->data);
+        printf("\t%s =====> %s \n", (char *)notesk->data, (char *)notesv->data);
+
+        notesv = notesv->next;
+        notesk = notesk->next;
+    }
+
+    g_list_free(rwnotesk);
+    g_list_free(rwnotesv);
+
     //Open the relation geral grafo
     FILE *geralGrafo = fopen("out/grafos/grafo.dot", "a");
     if (geralGrafo == NULL)
@@ -111,7 +133,11 @@ void showConcept( Concept cpt ){
         printf("Error opening file %s!\n", "out/grafos/grafo.dot");
         exit(1);
     }
-    //////
+
+    //Print relations
+    if (rlist && cslist){
+        fprintf(cptf, "\t</br><h3><font color='#85C1E9'>Relações:</font></h3>\n");
+    }
 
     while( rlist && cslist ){
         Relation r = (Relation)rlist->data;
