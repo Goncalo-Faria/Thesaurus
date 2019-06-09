@@ -95,7 +95,7 @@ void showConcept( Concept cpt ){
     }
 
     while(transk && transv){
-        fprintf(cptf, "\t\t<li>%s ==> %s</li></br>\n", (char *)transk->data, (char *)transv->data);
+        fprintf(cptf, "\t\t<li>%s - %s</li></br>\n", (char *)transk->data, (char *)transv->data);
         printf("\t%s =====> %s \n", (char*)transk->data, (char *)transv->data);
 
         transv = transv->next;
@@ -116,7 +116,7 @@ void showConcept( Concept cpt ){
     }
 
     while (notesk && notesv){
-        fprintf(cptf, "\t\t<li>%s ==> %s</li></br>\n", (char *)notesk->data, (char *)notesv->data);
+        fprintf(cptf, "\t\t<li>%s - %s</li></br>\n", (char *)notesk->data, (char *)notesv->data);
         printf("\t%s =====> %s \n", (char *)notesk->data, (char *)notesv->data);
 
         notesv = notesv->next;
