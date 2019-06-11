@@ -1,4 +1,9 @@
-# Thesaurus
+# Languages Processing
+
+Project using YACC to process Thesaurus.
+
+Check the project statement [here](https://github.com/Goncalo-Faria/Thesaurus/blob/master/pl18tp3.pdf) and the final report [here](https://github.com/Goncalo-Faria/Thesaurus/blob/master/Relatorio.pdf).
+
 
 ## Compiling and executing:
 
@@ -37,3 +42,11 @@ OR:
 ```
 > make clean
 ```
+
+## Contributing
+
+[Gonçalo Faria](https://github.com/Goncalo-Faria)
+
+[Catarina Machado](https://github.com/catarinamachado)
+
+[João Vilaça](https://github.com/machadovilaca)
